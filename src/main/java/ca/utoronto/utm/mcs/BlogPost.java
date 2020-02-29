@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 import com.sun.net.httpserver.HttpExchange;
@@ -106,7 +107,45 @@ public class BlogPost implements HttpHandler{
 	}
 
 	private void handleDelete(HttpExchange r) throws IOException, JSONException{
-		
+		String body = Utils.convert(r.getRequestBody());
+        JSONObject deserialized = new JSONObject(body);
+
+        String id = null;
+        
+        if (deserialized.has("_id"))
+        {
+        	id = deserialized.getString("_id");
+        }
+        // if query doesn't have these, it's improperly formatted or missing info
+        else
+        	r.sendResponseHeaders(400, -1);
+        
+        try
+		{
+        	// get database, and posts collection
+        	MongoCollection<Document> col = App.db.getDatabase("csc301a2").getCollection("posts");
+
+        	// create document to specify what to delete and add id
+        	Document rem = new Document();
+        	ObjectId oId = new ObjectId(id);
+        	rem.put("_id", oId);
+        	
+        	// delete from database
+        	if (col.findOneAndDelete(rem) == null)
+        	{
+        		// object could not be found in database
+            	r.sendResponseHeaders(404, -1);
+        	}
+        	else {
+        		// everything worked correctly
+            	r.sendResponseHeaders(200, -1);
+        	}
+		} catch (Exception e){
+        	//error
+        	r.sendResponseHeaders(500, -1);
+        } finally {
+        	//filler
+        }  
 	}
 	
 	private void handle405(HttpExchange r) throws IOException, JSONException{
