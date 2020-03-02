@@ -56,8 +56,15 @@ public class BlogPost implements HttpHandler{
         } else if (deserialized.has("title")) {
         	title = deserialized.getString("title");
         	
-        } else  // if query doesn't have these, it's improperly formatted or missing info
+        	if (title.isEmpty()) {
+        		r.sendResponseHeaders(400, -1); //as on Piazza post where only title is given and is empty
+        		return;
+        	}
+        	
+        } else { // if query doesn't have these, it's improperly formatted or missing info
         	r.sendResponseHeaders(400, -1);
+        	return;
+        }
         
         
         try {
@@ -107,7 +114,8 @@ public class BlogPost implements HttpHandler{
         		
         	} else { //only title is given
         		
-        		MongoCursor<Document> cursor = col.find(Filters.regex("title", ".*" + title + ".*")).iterator();
+        		MongoCursor<Document> cursor = col.find(Filters.regex("title", ".*\\b" + title + "\\b.*")).iterator();
+        															//match title as a word, not as part of another word
         			
         		if (!cursor.hasNext()) { //empty, so blog post does not exist
         			r.sendResponseHeaders(404, -1); 
