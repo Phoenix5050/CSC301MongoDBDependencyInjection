@@ -44,7 +44,17 @@ public class BlogPost implements HttpHandler{
 
 	private void handleGet(HttpExchange r) throws IOException, JSONException{
 		String body = Utils.convert(r.getRequestBody());
-        JSONObject deserialized = new JSONObject(body);
+		
+		
+		JSONObject deserialized = null;
+		
+		try {
+			deserialized = new JSONObject(body);
+		} catch (Exception e) {
+			r.sendResponseHeaders(400, -1);
+        	return;
+		}
+        
 
         String id = null;
         String title = null;
@@ -182,7 +192,15 @@ public class BlogPost implements HttpHandler{
 
 	private void handlePut(HttpExchange r) throws IOException, JSONException{
 		String body = Utils.convert(r.getRequestBody());
-        JSONObject deserialized = new JSONObject(body);
+
+		JSONObject deserialized = null;
+		
+		try {
+			deserialized = new JSONObject(body);
+		} catch (Exception e) {
+			r.sendResponseHeaders(400, -1);
+        	return;
+		}
 
         String title = null;
         String author = null;
@@ -243,7 +261,16 @@ public class BlogPost implements HttpHandler{
 
 	private void handleDelete(HttpExchange r) throws IOException, JSONException{
 		String body = Utils.convert(r.getRequestBody());
-        JSONObject deserialized = new JSONObject(body);
+
+
+		JSONObject deserialized = null;
+		
+		try {
+			deserialized = new JSONObject(body);
+		} catch (Exception e) {
+			r.sendResponseHeaders(400, -1);
+        	return;
+		}
 
         String id = null;
         
