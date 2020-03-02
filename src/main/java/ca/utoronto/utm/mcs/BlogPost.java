@@ -195,10 +195,10 @@ public class BlogPost implements HttpHandler{
         	author = deserialized.getString("author");
         	content = deserialized.getString("content");
         	tags = deserialized.getJSONArray("tags");
-        }
-        // if query doesn't have these, it's improperly formatted or missing info
-        else
+        } else { // if query doesn't have these, it's improperly formatted or missing info
         	r.sendResponseHeaders(400, -1);
+        	return;
+        }
         
         try
 		{
