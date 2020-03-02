@@ -252,8 +252,10 @@ public class BlogPost implements HttpHandler{
         	id = deserialized.getString("_id");
         }
         // if query doesn't have these, it's improperly formatted or missing info
-        else
+        else {
         	r.sendResponseHeaders(400, -1);
+        	return;
+        }
         
         try
 		{
